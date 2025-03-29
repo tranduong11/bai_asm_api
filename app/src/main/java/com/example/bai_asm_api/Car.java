@@ -1,14 +1,14 @@
 package com.example.bai_asm_api;
+import java.io.Serializable;
 
-
-public class Car {
+public class Car implements Serializable {
     private String _id;
     private String ten;
     private int namSX;
     private String hang;
-    private int gia;
+    private double gia;
 
-    public Car(String ten, int namSX, String hang, int gia) {
+    public Car(String ten, int namSX, String hang, double gia) {
         this.ten = ten;
         this.namSX = namSX;
         this.hang = hang;
@@ -31,7 +31,7 @@ public class Car {
         return hang;
     }
 
-    public int getGia() {
+    public double getGia() {
         return gia;
     }
 
@@ -51,7 +51,7 @@ public class Car {
         this.hang = hang;
     }
 
-    public void setGia(int gia) {
+    public void setGia(double gia) {
         this.gia = gia;
     }
 }

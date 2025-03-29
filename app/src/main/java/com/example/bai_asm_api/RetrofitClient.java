@@ -10,7 +10,7 @@ public class RetrofitClient {
     public static ApiService getApiService() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.66.163:3000/") // Dùng IP này nếu chạy trên emulator
+                    .baseUrl("http://192.168.0.102:3000/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

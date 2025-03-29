@@ -2,63 +2,55 @@ package com.example.bai_asm_api;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
-import com.example.bai_asm_api.User;
-import com.example.bai_asm_api.ApiService;
-import com.example.bai_asm_api.RetrofitClient;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
-    EditText edtUsername, edtPassword;
-    Button btnRegister;
+    private EditText edtEmail, edtPassword;
+    private Button btnRegister, btnGoToLogin;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        edtUsername = findViewById(R.id.edtUsername);
+        edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         btnRegister = findViewById(R.id.btnRegister);
+        btnGoToLogin = findViewById(R.id.btnGoToLogin);
 
-        btnRegister.setOnClickListener(v -> {
-            String username = edtUsername.getText().toString();
-            String password = edtPassword.getText().toString();
+        mAuth = FirebaseAuth.getInstance();
 
-            ApiService apiService = RetrofitClient.getApiService();
-            apiService.register(new User(username, password)).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
-                    }
-                }
+        btnRegister.setOnClickListener(view -> {
+            String email = edtEmail.getText().toString().trim();
+            String password = edtPassword.getText().toString().trim();
 
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Toast.makeText(RegisterActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(RegisterActivity.this, "Vui lòng nhập email và mật khẩu!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Đăng ký thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        btnGoToLogin.setOnClickListener(view -> {
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
     }
 }
